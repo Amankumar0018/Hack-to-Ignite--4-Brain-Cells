@@ -125,12 +125,56 @@ void main() {
 ```
 *(Android Emulator connects to host backend via `http://10.0.2.2:8000`)*
 
+## 📱 Application Screenshots
+
+### Citizen App & Onboarding
+<table>
+<tr>
+<td align="center"><b>Four Core Safety Pillars</b></td>
+<td align="center"><b>Authentication & Role Access</b></td>
+<td align="center"><b>Citizen Home Dashboard</b></td>
+</tr>
+<tr>
+<td><img src="screenshots/01-onboarding.png" width="250" alt="Onboarding Safety Pillars"></td>
+<td><img src="screenshots/02-login.png" width="250" alt="Sign In and Quick Dev Login"></td>
+<td><img src="screenshots/03-citizen-home.png" width="250" alt="Citizen Home Screen"></td>
+</tr>
+</table>
+
+### Emergency Response & Tracking Flow
+<table>
+<tr>
+<td align="center"><b>Active SOS Broadcast</b></td>
+<td align="center"><b>Intent Triage Selection</b></td>
+<td align="center"><b>Live OpenStreetMap Tracking</b></td>
+</tr>
+<tr>
+<td><img src="screenshots/04-emergency-sos-active.png" width="250" alt="Active SOS Broadcast"></td>
+<td><img src="screenshots/05-emergency-intent.png" width="250" alt="Emergency Intent Selection"></td>
+<td><img src="screenshots/06-emergency-tracking.png" width="250" alt="Emergency Live Tracking"></td>
+</tr>
+</table>
+
+### Responder App & AI Incident Intelligence
+<table>
+<tr>
+<td align="center"><b>Responder Active Feed</b></td>
+<td align="center"><b>AI Incident Intelligence</b></td>
+<td align="center"><b>Dispatch Assignment & ETA</b></td>
+</tr>
+<tr>
+<td><img src="screenshots/07-responder-dashboard.png" width="250" alt="Responder Dashboard"></td>
+<td><img src="screenshots/08-ai-incident-intelligence.png" width="250" alt="AI Incident Intelligence Advisory"></td>
+<td><img src="screenshots/09-responder-action.png" width="250" alt="Responder Accepted Dispatch"></td>
+</tr>
+</table>
+
 ---
 
 ## 🧪 Testing Summary
 
-- **Flutter Unit & Widget Tests**: `49 / 49 Passed` (`flutter test`)
-- **FastAPI Pytest Backend Suite**: `11 / 11 Passed` (`python -m pytest backend/tests`)
+- **Flutter Unit & Widget Tests**: `85 / 85 Passed` (`flutter test`)
+- **FastAPI Pytest Backend Suite**: `60 / 60 Passed` (`python -m pytest backend/tests`)
 - **Flutter Code Analysis**: `0 Issues / Clean` (`flutter analyze`)
 
 ---
