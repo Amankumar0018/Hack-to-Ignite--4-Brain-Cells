@@ -413,6 +413,7 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           tooltip: l10n.returnToCitizenHome,
@@ -421,13 +422,13 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.badge, color: AppColors.primary),
-            const SizedBox(width: AppDimensions.spaceSm),
+            const Icon(Icons.badge, color: AppColors.primary, size: 20),
+            const SizedBox(width: 6),
             Text(
               l10n.responderDashboard,
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w800,
-                fontSize: 18,
+                fontSize: 16,
               ),
             ),
           ],

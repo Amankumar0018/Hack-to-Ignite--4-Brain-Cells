@@ -8,6 +8,8 @@
 
 ### 🛡️ Citizen Emergency Experience
 - **Immediate SOS Trigger**: One-tap emergency broadcast with automated GPS coordinate capture.
+- **Voice Emergency Input**: Hands-free voice reporting via on-device speech-to-text on the Emergency Intent screen (`VoiceEmergencyInputCard`), enabling citizens to speak distress details naturally with real-time feedback, editable text fallback, and explicit dispatch confirmation.
+- **Multilingual Localization**: Complete application-wide localization supporting **English**, **हिन्दी (Hindi)**, and **मराठी (Marathi)** with persistent language preferences via `SharedPreferences`, instant reactive language switching across all screens without app restart, and automatic speech recognition locale resolution (`en_IN`, `hi_IN`, `mr_IN`).
 - **Pillar-Based Triage Flow**: Specialized subcategory intent selection across 4 core pillars:
   - 🚑 **Medical Emergency** (Trauma care, Cardiac arrest, Ambulance request)
   - ♀️ **Women's Safety** (Harassment, SOS alert, Rapid escort)
@@ -17,8 +19,9 @@
 - **Interactive OpenStreetMap**: Visual location map (`flutter_map`) displaying captured incident coordinates and active responder pin.
 - **Incident Cancellation**: Citizen-initiated cancellation with reason confirmation.
 
-### 🚓 Emergency Responder System
+### 🚓 Emergency Responder System & AI Intelligence
 - **Responder Dashboard**: Real-time active incident feed for emergency response units (`/responder-dashboard`).
+- **AI Incident Intelligence**: Contextual clinical and tactical intelligence advisory for every incident, highlighting prioritized hazard tags, recommended responder operational guidance, missing arrival checks, and engine confidence metrics.
 - **One-Tap Status Lifecycle Management**: Responders can accept dispatches, initiate active response, and mark incidents resolved.
 - **Responder GPS Context**: Displays current responder device location alongside citizen emergency coordinates.
 
@@ -36,18 +39,19 @@ pukaar/
 │   ├── core/
 │   │   ├── config/             # AppConfig, environment & API endpoints
 │   │   ├── constants/          # AppColors, AppDimensions, AppStrings
+│   │   ├── localization/       # AppLocalizations, LanguageSelectionDialog, LocalizationService
 │   │   ├── models/             # EmergencyIncident, EmergencyCategory, EmergencyStatus
 │   │   ├── repositories/       # EmergencyRepository (API & Mock implementations)
 │   │   ├── routing/            # AppRouter & AppRoutes
-│   │   ├── services/           # ServiceLocator, ApiService, LocationService, AuthService
-│   │   └── widgets/            # EmergencyMap (flutter_map / OpenStreetMap integration)
+│   │   ├── services/           # ServiceLocator, ApiService, LocationService, AuthService, SpeechService
+│   │   └── widgets/            # EmergencyMap (flutter_map / OpenStreetMap integration), LanguageSwitcherButton
 │   ├── features/
 │   │   ├── auth/               # Login & Registration screens
-│   │   ├── emergency/          # Intent Triage & Citizen Emergency Tracking screens
+│   │   ├── emergency/          # Intent Triage, Voice Emergency Input & Citizen Tracking screens
 │   │   ├── home/               # Home dashboard & SOS trigger
 │   │   ├── onboarding/         # Splash & Onboarding screens
 │   │   ├── profile/            # Citizen Profile, Medical ID & Emergency Contacts
-│   │   └── responder/          # Responder Dashboard screen
+│   │   └── responder/          # Responder Dashboard & AI Incident Intelligence card
 │   └── shared/                 # Reusable UI cards, buttons & state widgets
 ├── backend/                    # Python FastAPI Backend Service
 │   ├── app/                    # FastAPI routes, models & store
@@ -80,7 +84,7 @@ flutter pub get
 # Run static analysis
 flutter analyze
 
-# Run Flutter test suite (49 passing tests)
+# Run Flutter test suite (112 passing tests)
 flutter test
 
 # Launch mobile application on Android Emulator
@@ -107,7 +111,7 @@ source venv/bin/activate
 # Install backend dependencies
 pip install -r requirements.txt
 
-# Run pytest backend test suite (11 passing tests)
+# Run pytest backend test suite (60 passing tests)
 python -m pytest tests
 
 # Start local FastAPI server
@@ -130,12 +134,12 @@ void main() {
 ### Citizen App & Onboarding
 <table>
 <tr>
-<td align="center"><b>Four Core Safety Pillars</b></td>
-<td align="center"><b>Authentication & Role Access</b></td>
+<td align="center"><b>Multilingual Onboarding Selection</b></td>
+<td align="center"><b>Authentication & Quick Dev Login</b></td>
 <td align="center"><b>Citizen Home Dashboard</b></td>
 </tr>
 <tr>
-<td><img src="screenshots/01-onboarding.png" width="250" alt="Onboarding Safety Pillars"></td>
+<td><img src="screenshots/01-onboarding.png" width="250" alt="Multilingual Onboarding Selection"></td>
 <td><img src="screenshots/02-login.png" width="250" alt="Sign In and Quick Dev Login"></td>
 <td><img src="screenshots/03-citizen-home.png" width="250" alt="Citizen Home Screen"></td>
 </tr>
@@ -145,12 +149,12 @@ void main() {
 <table>
 <tr>
 <td align="center"><b>Active SOS Broadcast</b></td>
-<td align="center"><b>Intent Triage Selection</b></td>
+<td align="center"><b>Voice Input & Intent Triage</b></td>
 <td align="center"><b>Live OpenStreetMap Tracking</b></td>
 </tr>
 <tr>
 <td><img src="screenshots/04-emergency-sos-active.png" width="250" alt="Active SOS Broadcast"></td>
-<td><img src="screenshots/05-emergency-intent.png" width="250" alt="Emergency Intent Selection"></td>
+<td><img src="screenshots/05-emergency-intent.png" width="250" alt="Voice Input and Emergency Intent Selection"></td>
 <td><img src="screenshots/06-emergency-tracking.png" width="250" alt="Emergency Live Tracking"></td>
 </tr>
 </table>
@@ -173,7 +177,7 @@ void main() {
 
 ## 🧪 Testing Summary
 
-- **Flutter Unit & Widget Tests**: `85 / 85 Passed` (`flutter test`)
+- **Flutter Unit & Widget Tests**: `112 / 112 Passed` (`flutter test`)
 - **FastAPI Pytest Backend Suite**: `60 / 60 Passed` (`python -m pytest backend/tests`)
 - **Flutter Code Analysis**: `0 Issues / Clean` (`flutter analyze`)
 
@@ -182,3 +186,4 @@ void main() {
 ## 📄 License
 
 This project is licensed under the MIT License — see the LICENSE file for details.
+
