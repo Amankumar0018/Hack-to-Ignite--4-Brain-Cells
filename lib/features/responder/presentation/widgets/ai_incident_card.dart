@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/ai_intelligence.dart';
 
 /// Dedicated UI component rendering structured AI Incident Intelligence for First Responders.
@@ -39,6 +40,7 @@ class _AIIncidentCardState extends State<AIIncidentCard> {
   Widget build(BuildContext context) {
     final ai = widget.intelligence;
     final urgencyColor = _getUrgencyColor(ai.urgencyScore);
+    final l10n = context.l10n;
 
     return Container(
       decoration: BoxDecoration(
@@ -80,9 +82,9 @@ class _AIIncidentCardState extends State<AIIncidentCard> {
                     size: 18,
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    'AI INCIDENT INTELLIGENCE',
-                    style: TextStyle(
+                  Text(
+                    l10n.aiIncidentIntelligence,
+                    style: const TextStyle(
                       color: Color(0xFFE0E7FF),
                       fontWeight: FontWeight.w800,
                       fontSize: 12,
@@ -134,14 +136,14 @@ class _AIIncidentCardState extends State<AIIncidentCard> {
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.gavel_rounded, color: Colors.amber, size: 14),
-                        SizedBox(width: 6),
+                        const Icon(Icons.gavel_rounded, color: Colors.amber, size: 14),
+                        const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            'AI Advisory — Verify before action',
-                            style: TextStyle(
+                            l10n.aiAdvisoryDisclaimer,
+                            style: const TextStyle(
                               color: Colors.amber,
                               fontWeight: FontWeight.w700,
                               fontSize: 11,
@@ -168,9 +170,9 @@ class _AIIncidentCardState extends State<AIIncidentCard> {
 
                   // 2. Hazards
                   if (ai.hazards.isNotEmpty) ...[
-                    const Text(
-                      'IDENTIFIED HAZARDS / RISKS',
-                      style: TextStyle(
+                    Text(
+                      l10n.identifiedHazards,
+                      style: const TextStyle(
                         color: Color(0xFF94A3B8),
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
@@ -214,9 +216,9 @@ class _AIIncidentCardState extends State<AIIncidentCard> {
 
                   // 3. Recommended Responder Guidance
                   if (ai.recommendedActions.isNotEmpty) ...[
-                    const Text(
-                      'RECOMMENDED RESPONDER GUIDANCE',
-                      style: TextStyle(
+                    Text(
+                      l10n.recommendedGuidance,
+                      style: const TextStyle(
                         color: Color(0xFF94A3B8),
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
@@ -251,9 +253,9 @@ class _AIIncidentCardState extends State<AIIncidentCard> {
 
                   // 4. Missing Information Warnings
                   if (ai.missingInfo.isNotEmpty) ...[
-                    const Text(
-                      'MISSING INFORMATION (VERIFY ON ARRIVAL)',
-                      style: TextStyle(
+                    Text(
+                      l10n.missingInfo,
+                      style: const TextStyle(
                         color: Color(0xFF94A3B8),
                         fontSize: 10,
                         fontWeight: FontWeight.bold,

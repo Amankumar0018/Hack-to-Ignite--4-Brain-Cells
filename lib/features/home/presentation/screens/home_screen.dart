@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/emergency_enums.dart';
 import '../../../../core/models/user_profile.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/section_header.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 
 /// Central Home Dashboard for Pukaar emergency platform.
 class HomeScreen extends StatefulWidget {
@@ -140,6 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final showResponderAccess = _currentUser == null || _currentUser!.isResponder;
 
     return Scaffold(
@@ -150,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Icon(Icons.shield_rounded, color: AppColors.primary),
             const SizedBox(width: AppDimensions.spaceSm),
             Text(
-              AppStrings.appName,
+              l10n.appName,
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1,
@@ -159,10 +161,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
+          const LanguageSwitcherButton(compact: true),
           if (showResponderAccess)
             IconButton(
               icon: const Icon(Icons.badge_outlined),
-              tooltip: 'Responder Dashboard',
+              tooltip: l10n.responderDashboard,
               onPressed: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 final navigator = Navigator.of(context);
@@ -185,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           IconButton(
             icon: const Icon(Icons.account_circle_outlined),
-            tooltip: 'Profile',
+            tooltip: l10n.profile,
             onPressed: () => Navigator.pushNamed(context, AppRoutes.profile).then((_) {
               _fetchLocation();
               _loadCurrentUser();
@@ -240,26 +243,26 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
 
               // Location status banner
-              _buildLocationBanner(theme),
+              _buildLocationBanner(theme, context),
               const SizedBox(height: AppDimensions.spaceMd),
 
               // SOS Trigger Area
-              _buildSosWidget(theme),
+              _buildSosWidget(theme, context),
               const SizedBox(height: AppDimensions.spaceLg),
 
               // Emergency Pillars
-              const SectionHeader(
-                title: 'Select Emergency Category',
-                subtitle: 'Directly open specific triage incident routing',
+              SectionHeader(
+                title: l10n.selectEmergencyCategory,
+                subtitle: l10n.selectEmergencyCategorySubtitle,
               ),
               const SizedBox(height: AppDimensions.spaceSm),
               _buildCategoryGrid(context),
               const SizedBox(height: AppDimensions.spaceLg),
 
               // Quick Access Profile Utilities
-              const SectionHeader(
-                title: 'Preparedness & Health ID',
-                subtitle: 'Information available for local medical responders',
+              SectionHeader(
+                title: l10n.preparednessAndHealthId,
+                subtitle: l10n.preparednessSubtitle,
               ),
               const SizedBox(height: AppDimensions.spaceSm),
               Row(
@@ -273,12 +276,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           const Icon(Icons.contacts_rounded, color: AppColors.secondaryLight),
                           const SizedBox(height: AppDimensions.spaceSm),
                           Text(
-                            AppStrings.emergencyContacts,
+                            l10n.emergencyContacts,
                             style: theme.textTheme.titleLarge?.copyWith(fontSize: 14),
                           ),
                           const SizedBox(height: AppDimensions.space2xs),
                           Text(
-                            'Manage trusted contacts',
+                            l10n.manageTrustedContacts,
                             style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
                           ),
                         ],
@@ -295,12 +298,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           const Icon(Icons.favorite_rounded, color: AppColors.primary),
                           const SizedBox(height: AppDimensions.spaceSm),
                           Text(
-                            AppStrings.medicalId,
+                            l10n.medicalId,
                             style: theme.textTheme.titleLarge?.copyWith(fontSize: 14),
                           ),
                           const SizedBox(height: AppDimensions.space2xs),
                           Text(
-                            'Blood group & allergies',
+                            l10n.bloodGroupAndAllergies,
                             style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
                           ),
                         ],
@@ -316,7 +319,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildLocationBanner(ThemeData theme) {
+  Widget _buildLocationBanner(ThemeData theme, BuildContext context) {
+    final l10n = context.l10n;
+    final displayStatus = _locationEnabled
+        ? l10n.gpsActiveHighAccuracy
+        : (_locationStatus == 'Checking GPS...' ? l10n.checkingGps : l10n.locationDisabled);
+
     return AppCard(
       backgroundColor: _locationEnabled
           ? AppColors.success.withValues(alpha: 0.08)
@@ -340,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _locationStatus,
+                  displayStatus,
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
                 if (_coordinates != null)
@@ -362,7 +370,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSosWidget(ThemeData theme) {
+  Widget _buildSosWidget(ThemeData theme, BuildContext context) {
+    final l10n = context.l10n;
     if (_sosCountdown > 0) {
       return Container(
         padding: AppDimensions.paddingLg,
@@ -372,9 +381,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: Column(
           children: [
-            const Text(
-              'BROADCASTING IN...',
-              style: TextStyle(
+            Text(
+              l10n.broadcastingIn,
+              style: const TextStyle(
                 color: AppColors.white,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.5,
@@ -397,9 +406,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 minimumSize: const Size.fromHeight(50),
               ),
               onPressed: _cancelSos,
-              child: const Text(
-                'CANCEL DISPATCH',
-                style: TextStyle(fontWeight: FontWeight.w900),
+              child: Text(
+                l10n.cancelDispatch,
+                style: const TextStyle(fontWeight: FontWeight.w900),
               ),
             ),
           ],
@@ -435,9 +444,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(width: AppDimensions.spaceSm),
-                const Text(
-                  'SOS BROADCAST ACTIVE',
-                  style: TextStyle(
+                Text(
+                  l10n.sosBroadcastActive,
+                  style: const TextStyle(
                     color: AppColors.white,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
@@ -446,9 +455,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: AppDimensions.spaceSm),
-            const Text(
-              'Your location is being updated live.',
-              style: TextStyle(color: Colors.white70, fontSize: 13),
+            Text(
+              l10n.liveLocationUpdating,
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppDimensions.spaceLg),
@@ -459,9 +468,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 minimumSize: const Size.fromHeight(50),
               ),
               onPressed: _cancelSos,
-              child: const Text(
-                'DEACTIVATE SOS ALERT',
-                style: TextStyle(fontWeight: FontWeight.w900),
+              child: Text(
+                l10n.deactivateSosAlert,
+                style: const TextStyle(fontWeight: FontWeight.w900),
               ),
             ),
           ],
@@ -484,9 +493,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Column(
         children: [
-          const Text(
-            'IMMEDIATE EMERGENCY BROADCAST',
-            style: TextStyle(
+          Text(
+            l10n.immediateEmergencyBroadcast,
+            style: const TextStyle(
               color: Colors.white70,
               fontWeight: FontWeight.w700,
               fontSize: 12,
@@ -524,9 +533,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: AppDimensions.spaceMd),
-          const Text(
-            'Tap and hold/press SOS to notify all local emergency rescue teams immediately.',
-            style: TextStyle(
+          Text(
+            l10n.tapSosInstruction,
+            style: const TextStyle(
               color: Colors.white60,
               fontSize: 11,
             ),
@@ -538,6 +547,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategoryGrid(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       children: [
         Row(
@@ -545,7 +555,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: _buildServiceCard(
                 context,
-                title: AppStrings.medicalEmergency,
+                title: l10n.medicalEmergency,
                 icon: Icons.medical_services_rounded,
                 color: AppColors.medicalEmergency,
               ),
@@ -554,7 +564,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: _buildServiceCard(
                 context,
-                title: AppStrings.womenSafety,
+                title: l10n.womenSafety,
                 icon: Icons.shield_rounded,
                 color: AppColors.womenSafety,
               ),
@@ -567,7 +577,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: _buildServiceCard(
                 context,
-                title: AppStrings.disasterManagement,
+                title: l10n.disasterManagement,
                 icon: Icons.warning_rounded,
                 color: AppColors.disasterManagement,
               ),
@@ -576,7 +586,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: _buildServiceCard(
                 context,
-                title: AppStrings.campusEmergency,
+                title: l10n.campusEmergency,
                 icon: Icons.school_rounded,
                 color: AppColors.campusEmergency,
               ),
@@ -594,6 +604,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required Color color,
   }) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return AppCard(
       onTap: () {
@@ -627,7 +638,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               Text(
-                'Report Incident',
+                l10n.reportIncident,
                 style: TextStyle(
                   color: color,
                   fontWeight: FontWeight.w600,

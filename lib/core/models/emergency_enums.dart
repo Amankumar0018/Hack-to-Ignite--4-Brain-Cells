@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+import '../localization/app_localizations.dart';
+
 /// Core emergency categorization pillars supported by Pukaar.
 enum EmergencyCategory {
   medical,
@@ -5,7 +8,22 @@ enum EmergencyCategory {
   disaster,
   campus;
 
-  /// User-friendly label for presentation.
+  /// Localized name for presentation.
+  String localizedName(BuildContext context) {
+    final l10n = context.l10n;
+    switch (this) {
+      case EmergencyCategory.medical:
+        return l10n.medicalEmergency;
+      case EmergencyCategory.womenSafety:
+        return l10n.womenSafety;
+      case EmergencyCategory.disaster:
+        return l10n.disasterManagement;
+      case EmergencyCategory.campus:
+        return l10n.campusEmergency;
+    }
+  }
+
+  /// User-friendly label for presentation (English default).
   String get displayName {
     switch (this) {
       case EmergencyCategory.medical:
@@ -22,13 +40,21 @@ enum EmergencyCategory {
   /// Parses category from UI text or backend string keys.
   static EmergencyCategory fromString(String value) {
     final normalized = value.toLowerCase().trim();
-    if (normalized.contains('medic')) {
+    if (normalized.contains('medic') ||
+        normalized.contains('वैद्यकीय') ||
+        normalized.contains('चिकित्सा')) {
       return EmergencyCategory.medical;
-    } else if (normalized.contains('women') || normalized.contains('safety')) {
+    } else if (normalized.contains('women') ||
+        normalized.contains('safety') ||
+        normalized.contains('महिला')) {
       return EmergencyCategory.womenSafety;
-    } else if (normalized.contains('disaster')) {
+    } else if (normalized.contains('disaster') ||
+        normalized.contains('आपत्ती') ||
+        normalized.contains('आपदा')) {
       return EmergencyCategory.disaster;
-    } else if (normalized.contains('campus')) {
+    } else if (normalized.contains('campus') ||
+        normalized.contains('कॅम्पस') ||
+        normalized.contains('परिसर')) {
       return EmergencyCategory.campus;
     }
     return EmergencyCategory.medical;
@@ -45,7 +71,28 @@ enum EmergencyStatus {
   resolved,
   cancelled;
 
-  /// User-friendly status label.
+  /// Localized status label for UI presentation.
+  String localizedName(BuildContext context) {
+    final l10n = context.l10n;
+    switch (this) {
+      case EmergencyStatus.created:
+        return l10n.statusCreated;
+      case EmergencyStatus.searching:
+        return l10n.statusSearching;
+      case EmergencyStatus.dispatched:
+        return l10n.statusDispatched;
+      case EmergencyStatus.accepted:
+        return l10n.statusAccepted;
+      case EmergencyStatus.inProgress:
+        return l10n.statusInProgress;
+      case EmergencyStatus.resolved:
+        return l10n.statusResolved;
+      case EmergencyStatus.cancelled:
+        return l10n.statusCancelled;
+    }
+  }
+
+  /// User-friendly status label (English default).
   String get displayName {
     switch (this) {
       case EmergencyStatus.created:

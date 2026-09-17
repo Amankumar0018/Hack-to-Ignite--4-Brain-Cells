@@ -1,4 +1,5 @@
 import '../config/app_config.dart';
+import '../localization/localization_service.dart';
 import '../repositories/api_emergency_repository.dart';
 import '../repositories/emergency_repository.dart';
 import '../repositories/mock_emergency_repository.dart';
@@ -10,6 +11,7 @@ import 'location_service.dart';
 import 'notification_service.dart';
 import 'realtime_service.dart';
 import 'secure_storage_service.dart';
+import 'speech_service.dart';
 import 'storage_service.dart';
 
 /// Lightweight dependency container for Pukaar foundation services and repositories.
@@ -30,6 +32,8 @@ class ServiceLocator {
   late AuthService authService;
   late EmergencyRepository emergencyRepository;
   late EmergencyService emergencyService;
+  late SpeechService speechService;
+  late LocalizationService localizationService;
 
   /// Initializes default service instances.
   /// Set [useBackendApi] to true to switch from MockEmergencyService to ApiEmergencyService.
@@ -43,6 +47,8 @@ class ServiceLocator {
     AuthService? customAuthService,
     EmergencyRepository? customEmergencyRepository,
     EmergencyService? customEmergencyService,
+    SpeechService? customSpeechService,
+    LocalizationService? customLocalizationService,
     bool? useBackendApi,
   }) {
     final bool backendFlag = useBackendApi ?? AppConfig.useBackendApi;
@@ -85,6 +91,9 @@ class ServiceLocator {
         authService: authService,
       );
     }
+
+    speechService = customSpeechService ?? SpeechToTextService();
+    localizationService = customLocalizationService ?? LocalizationService(storageService);
   }
 }
 

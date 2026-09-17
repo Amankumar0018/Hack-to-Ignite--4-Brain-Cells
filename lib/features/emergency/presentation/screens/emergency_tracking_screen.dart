@@ -2,12 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/emergency_enums.dart';
 import '../../../../core/models/emergency_incident.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../core/widgets/emergency_map.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/secondary_button.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 
 class EmergencyTrackingScreen extends StatefulWidget {
   final EmergencyIncident incident;
@@ -65,24 +67,23 @@ class _EmergencyTrackingScreenState extends State<EmergencyTrackingScreen> {
   }
 
   void _confirmCancel() {
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cancel Emergency?'),
-        content: const Text(
-          'Are you sure you want to cancel this emergency request? Responders will be notified to stand down.',
-        ),
+        title: Text(l10n.cancelEmergencyTitle),
+        content: Text(l10n.cancelEmergencyContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('No, Keep Active'),
+            child: Text(l10n.keepActive),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _cancelEmergency();
             },
-            child: const Text('Yes, Cancel', style: TextStyle(color: AppColors.error)),
+            child: Text(l10n.yesCancel, style: const TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -104,7 +105,8 @@ class _EmergencyTrackingScreenState extends State<EmergencyTrackingScreen> {
     }
   }
 
-  Widget _buildStatusTimeline() {
+  Widget _buildStatusTimeline(BuildContext context) {
+    final l10n = context.l10n;
     final statuses = [
       EmergencyStatus.created,
       EmergencyStatus.searching,
@@ -122,14 +124,14 @@ class _EmergencyTrackingScreenState extends State<EmergencyTrackingScreen> {
           borderRadius: AppDimensions.borderRadiusMd,
           border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
         ),
-        child: const Row(
+        child: Row(
           children: [
-            Icon(Icons.cancel, color: AppColors.error),
-            SizedBox(width: AppDimensions.spaceSm),
+            const Icon(Icons.cancel, color: AppColors.error),
+            const SizedBox(width: AppDimensions.spaceSm),
             Expanded(
               child: Text(
-                'This emergency incident has been cancelled.',
-                style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold),
+                l10n.incidentCancelledBanner,
+                style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -176,7 +178,7 @@ class _EmergencyTrackingScreenState extends State<EmergencyTrackingScreen> {
               ),
               const SizedBox(width: AppDimensions.spaceMd),
               Text(
-                status.displayName,
+                status.localizedName(context),
                 style: TextStyle(
                   fontWeight: isCurrent ? FontWeight.bold : (isCompleted ? FontWeight.w500 : FontWeight.normal),
                   color: isPending ? Colors.grey : AppColors.textPrimaryLight,
@@ -190,18 +192,20 @@ class _EmergencyTrackingScreenState extends State<EmergencyTrackingScreen> {
     );
   }
 
-  Widget _buildResponderInfo() {
+  Widget _buildResponderInfo(BuildContext context) {
     if (_currentIncident.assignedResponderId == null) {
       return const SizedBox.shrink();
     }
+
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: AppDimensions.spaceLg),
-        const Text(
-          'Assigned Responder',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Text(
+          l10n.assignedResponder,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: AppDimensions.spaceSm),
         AppCard(
@@ -272,13 +276,17 @@ class _EmergencyTrackingScreenState extends State<EmergencyTrackingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final color = _getCategoryColor();
     final isActive = _currentIncident.status.isActive;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Emergency Status'),
+        title: Text(l10n.emergencyStatus),
         backgroundColor: theme.appBarTheme.backgroundColor,
+        actions: const [
+          LanguageSwitcherButton(compact: true),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -301,7 +309,7 @@ class _EmergencyTrackingScreenState extends State<EmergencyTrackingScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _currentIncident.category.displayName.toUpperCase(),
+                            _currentIncident.category.localizedName(context).toUpperCase(),
                             style: const TextStyle(
                               color: AppColors.white,
                               fontWeight: FontWeight.bold,
@@ -360,7 +368,7 @@ class _EmergencyTrackingScreenState extends State<EmergencyTrackingScreen> {
                   longitude: _currentIncident.longitude,
                   responderLatitude: _currentIncident.responderLatitude,
                   responderLongitude: _currentIncident.responderLongitude,
-                  title: '${_currentIncident.category.displayName} Emergency Location',
+                  title: '${_currentIncident.category.localizedName(context)} Emergency Location',
                   markerColor: color,
                   height: 200,
                 ),
@@ -372,15 +380,15 @@ class _EmergencyTrackingScreenState extends State<EmergencyTrackingScreen> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: AppDimensions.spaceMd),
-              _buildStatusTimeline(),
+              _buildStatusTimeline(context),
 
-              _buildResponderInfo(),
+              _buildResponderInfo(context),
               
               const SizedBox(height: AppDimensions.spaceXl),
               
               if (isActive)
                 SecondaryButton(
-                  label: 'Cancel Emergency',
+                  label: l10n.cancelEmergency,
                   onPressed: _confirmCancel,
                 ),
                 

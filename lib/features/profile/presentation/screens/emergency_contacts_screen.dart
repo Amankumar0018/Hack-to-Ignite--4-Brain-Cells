@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/user_profile.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 
 /// Screen managing user's primary emergency contact list.
 class EmergencyContactsScreen extends StatefulWidget {
@@ -90,17 +91,21 @@ class _EmergencyContactsScreenState extends State<EmergencyContactsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text(AppStrings.emergencyContacts)),
+        appBar: AppBar(title: Text(l10n.emergencyContacts)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.emergencyContacts),
+        title: Text(l10n.emergencyContacts),
+        actions: const [
+          LanguageSwitcherButton(compact: true),
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -111,14 +116,14 @@ class _EmergencyContactsScreenState extends State<EmergencyContactsScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Trusted Contacts',
+                  l10n.emergencyContacts,
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: AppDimensions.space2xs),
                 Text(
-                  'These details are broadcasted during a crisis to alert your family/guardians.',
+                  l10n.emergencyProfileDesc,
                   style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: AppDimensions.spaceLg),
@@ -130,15 +135,15 @@ class _EmergencyContactsScreenState extends State<EmergencyContactsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Primary Guardian Details',
+                              l10n.primaryEmergencyContact,
                               style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: AppDimensions.spaceMd),
                             TextFormField(
                               controller: _contactNameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Contact Name *',
-                                prefixIcon: Icon(Icons.person_outline),
+                              decoration: InputDecoration(
+                                labelText: '${l10n.contactPersonName} *',
+                                prefixIcon: const Icon(Icons.person_outline),
                                 hintText: 'e.g. Spouse, Parent, Sister',
                               ),
                               validator: (value) {
@@ -151,9 +156,9 @@ class _EmergencyContactsScreenState extends State<EmergencyContactsScreen> {
                             const SizedBox(height: AppDimensions.spaceMd),
                             TextFormField(
                               controller: _contactPhoneController,
-                              decoration: const InputDecoration(
-                                labelText: 'Contact Mobile Number *',
-                                prefixIcon: Icon(Icons.phone_outlined),
+                              decoration: InputDecoration(
+                                labelText: '${l10n.contactPersonMobile} *',
+                                prefixIcon: const Icon(Icons.phone_outlined),
                               ),
                               keyboardType: TextInputType.phone,
                               validator: (value) {
@@ -171,7 +176,7 @@ class _EmergencyContactsScreenState extends State<EmergencyContactsScreen> {
                 ),
                 PrimaryButton(
                   icon: Icons.save,
-                  label: 'Save Emergency Contact',
+                  label: l10n.save,
                   isLoading: _isSaving,
                   onPressed: _saveContact,
                 ),

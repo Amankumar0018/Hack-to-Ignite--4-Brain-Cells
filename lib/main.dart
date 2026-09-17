@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/constants/app_strings.dart';
+import 'core/localization/app_localizations.dart';
+import 'core/localization/localization_service.dart';
 import 'core/routing/app_router.dart';
 import 'core/routing/app_routes.dart';
 import 'core/services/secure_storage_service.dart';
@@ -21,6 +24,9 @@ void main() async {
     useBackendApi: true,
   );
 
+  // Restore saved language preference on app startup
+  await ServiceLocator.instance.localizationService.init();
+
   runApp(const PukaarApp());
 }
 
@@ -30,14 +36,29 @@ class PukaarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppStrings.appName,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      initialRoute: AppRoutes.splash,
-      onGenerateRoute: AppRouter.generateRoute,
+    final localizationService = ServiceLocator.instance.localizationService;
+
+    return ListenableBuilder(
+      listenable: localizationService,
+      builder: (context, _) {
+        return MaterialApp(
+          title: AppStrings.appName,
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+          locale: localizationService.currentLocale,
+          supportedLocales: LocalizationService.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          initialRoute: AppRoutes.splash,
+          onGenerateRoute: AppRouter.generateRoute,
+        );
+      },
     );
   }
 }

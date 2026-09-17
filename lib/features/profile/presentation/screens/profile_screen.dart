@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/user_profile.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/secondary_button.dart';
+import '../../../localization/presentation/widgets/language_selection_dialog.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 
 /// User Profile and configuration settings screen.
 class ProfileScreen extends StatefulWidget {
@@ -118,25 +120,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text(AppStrings.profile)),
+        appBar: AppBar(title: Text(l10n.profile)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_profile == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text(AppStrings.profile)),
+        appBar: AppBar(title: Text(l10n.profile)),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('No profile data found. Please log in again.'),
+              Text(l10n.noDataFound),
               const SizedBox(height: 16),
               SecondaryButton(
-                label: 'Go to Login',
+                label: l10n.signIn,
                 onPressed: _handleLogout,
                 isFullWidth: false,
               ),
@@ -148,7 +151,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.profile),
+        title: Text(l10n.profile),
+        actions: const [
+          LanguageSwitcherButton(compact: true),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -190,10 +196,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: Text(
                           _profile!.isDual
-                              ? 'Dual Role (Citizen + Responder)'
+                              ? l10n.dualRole
                               : _profile!.isResponder
-                                  ? 'Emergency Responder'
-                                  : 'Citizen',
+                                  ? l10n.responderRole
+                                  : l10n.citizenRole,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -212,7 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Edit Personal details Card
                 Text(
-                  'Edit Personal Information',
+                  l10n.editPersonalInformation,
                   style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: AppDimensions.spaceSm),
@@ -221,9 +227,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       TextFormField(
                         controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Full Name',
-                          prefixIcon: Icon(Icons.person_outline),
+                        decoration: InputDecoration(
+                          labelText: l10n.fullName,
+                          prefixIcon: const Icon(Icons.person_outline),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -238,9 +244,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Expanded(
                             child: TextFormField(
                               controller: _ageController,
-                              decoration: const InputDecoration(
-                                labelText: 'Age (Years)',
-                                prefixIcon: Icon(Icons.cake_outlined),
+                              decoration: InputDecoration(
+                                labelText: l10n.ageYears,
+                                prefixIcon: const Icon(Icons.cake_outlined),
                               ),
                               keyboardType: TextInputType.number,
                             ),
@@ -249,9 +255,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Expanded(
                             child: TextFormField(
                               controller: _emailController,
-                              decoration: const InputDecoration(
-                                labelText: 'Email Address',
-                                prefixIcon: Icon(Icons.email_outlined),
+                              decoration: InputDecoration(
+                                labelText: l10n.emailOptional,
+                                prefixIcon: const Icon(Icons.email_outlined),
                               ),
                               keyboardType: TextInputType.emailAddress,
                             ),
@@ -260,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: AppDimensions.spaceLg),
                       PrimaryButton(
-                        label: 'Save Profile Changes',
+                        label: l10n.save,
                         isLoading: _isSaving,
                         onPressed: _saveProfileChanges,
                       ),
@@ -269,9 +275,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: AppDimensions.spaceLg),
 
-                // Emergency shortcuts Card
+                // Emergency shortcuts & Preferences Card
                 Text(
-                  'Emergency Configurations',
+                  l10n.emergencyConfigurations,
                   style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: AppDimensions.spaceSm),
@@ -280,8 +286,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.contacts_rounded, color: AppColors.primary),
-                        title: const Text(AppStrings.emergencyContacts),
+                        leading: const Icon(Icons.language_rounded, color: AppColors.primary),
+                        title: Text(l10n.appLanguageLabel),
+                        subtitle: Text(
+                          '${ServiceLocator.instance.localizationService.currentLanguage.nativeName} (${ServiceLocator.instance.localizationService.currentLanguage.englishName})',
+                        ),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => const LanguageSelectionDialog(),
+                          );
+                        },
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: const Icon(Icons.contacts_rounded, color: AppColors.secondaryLight),
+                        title: Text(l10n.emergencyContacts),
                         subtitle: Text('Primary: ${_profile!.emergencyContactName}'),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => Navigator.pushNamed(context, AppRoutes.emergencyContacts).then((_) {
@@ -291,7 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.medical_information_rounded, color: AppColors.medicalEmergency),
-                        title: const Text(AppStrings.medicalId),
+                        title: Text(l10n.medicalId),
                         subtitle: Text('Blood type: ${_profile!.bloodGroup ?? "Not set"}'),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => Navigator.pushNamed(context, AppRoutes.medicalId).then((_) {
@@ -305,7 +326,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Status Toggles Card
                 Text(
-                  'System Permissions & Status',
+                  l10n.systemPermissionsAndStatus,
                   style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: AppDimensions.spaceSm),
@@ -315,7 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       ListTile(
                         leading: const Icon(Icons.location_on, color: AppColors.success),
-                        title: const Text('Location Services Status'),
+                        title: Text(l10n.locationServicesStatus),
                         subtitle: Text(_locationEnabled ? 'Permission Enabled' : 'Disabled / Missing Permission'),
                         trailing: Icon(
                           _locationEnabled ? Icons.check_circle : Icons.warning,
@@ -325,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.notifications_active_outlined, color: AppColors.accent),
-                        title: const Text('Emergency Broadcast Alerts'),
+                        title: Text(l10n.emergencyBroadcastAlerts),
                         subtitle: const Text('Campus & regional disaster notices'),
                         trailing: Switch(
                           value: _notificationsEnabled,
@@ -342,7 +363,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: AppDimensions.space2xl),
 
                 SecondaryButton(
-                  label: 'Sign Out',
+                  label: l10n.signOut,
                   onPressed: _handleLogout,
                 ),
                 const SizedBox(height: AppDimensions.spaceMd),

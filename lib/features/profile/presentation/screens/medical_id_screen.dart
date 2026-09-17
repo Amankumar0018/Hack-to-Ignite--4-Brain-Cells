@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/user_profile.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 
 /// Screen for displaying and configuring Medical ID parameters for first responders.
 class MedicalIdScreen extends StatefulWidget {
@@ -95,17 +96,21 @@ class _MedicalIdScreenState extends State<MedicalIdScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text(AppStrings.medicalId)),
+        appBar: AppBar(title: Text(l10n.medicalId)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.medicalId),
+        title: Text(l10n.medicalId),
+        actions: const [
+          LanguageSwitcherButton(compact: true),
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -116,14 +121,14 @@ class _MedicalIdScreenState extends State<MedicalIdScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Critical Health Profile',
+                  l10n.medicalId,
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: AppDimensions.space2xs),
                 Text(
-                  'Visible to verified medical dispatchers and paramedics to assist in emergency treatment.',
+                  l10n.medicalIdSubtitle,
                   style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: AppDimensions.spaceLg),
@@ -136,18 +141,18 @@ class _MedicalIdScreenState extends State<MedicalIdScreen> {
                           children: [
                             TextFormField(
                               controller: _bloodGroupController,
-                              decoration: const InputDecoration(
-                                labelText: 'Blood Group',
-                                prefixIcon: Icon(Icons.bloodtype_outlined),
+                              decoration: InputDecoration(
+                                labelText: l10n.bloodGroup,
+                                prefixIcon: const Icon(Icons.bloodtype_outlined),
                                 hintText: 'e.g. O Positive (O+), A Negative (A-)',
                               ),
                             ),
                             const SizedBox(height: AppDimensions.spaceMd),
                             TextFormField(
                               controller: _allergiesController,
-                              decoration: const InputDecoration(
-                                labelText: 'Known Allergies',
-                                prefixIcon: Icon(Icons.warning_amber_outlined),
+                              decoration: InputDecoration(
+                                labelText: l10n.allergies,
+                                prefixIcon: const Icon(Icons.warning_amber_outlined),
                                 hintText: 'e.g. Penicillin, Peanuts, Pollen',
                               ),
                               maxLines: 2,
@@ -155,9 +160,9 @@ class _MedicalIdScreenState extends State<MedicalIdScreen> {
                             const SizedBox(height: AppDimensions.spaceMd),
                             TextFormField(
                               controller: _medicationsController,
-                              decoration: const InputDecoration(
-                                labelText: 'Active Medications / Notes',
-                                prefixIcon: Icon(Icons.medical_services_outlined),
+                              decoration: InputDecoration(
+                                labelText: l10n.medications,
+                                prefixIcon: const Icon(Icons.medical_services_outlined),
                                 hintText: 'List any critical medications or notes',
                               ),
                               maxLines: 2,
@@ -170,7 +175,7 @@ class _MedicalIdScreenState extends State<MedicalIdScreen> {
                 ),
                 PrimaryButton(
                   icon: Icons.save,
-                  label: 'Save Medical ID Details',
+                  label: l10n.save,
                   isLoading: _isSaving,
                   onPressed: _saveMedicalId,
                 ),

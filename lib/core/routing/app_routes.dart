@@ -14,4 +14,5 @@ class AppRoutes {
   static const String emergencyIntent = '/emergency-intent';
   static const String emergencyTracking = '/emergency-tracking';
   static const String responderDashboard = '/responder-dashboard';
+  static const String languageSelection = '/language-selection';
 }

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
+import '../../../../core/localization/app_language.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/emergency_enums.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
+import '../widgets/voice_emergency_input_card.dart';
 
 /// Screen representing the specific emergency subcategory selection (Triage).
 class EmergencyIntentScreen extends StatefulWidget {
@@ -22,44 +26,69 @@ class EmergencyIntentScreen extends StatefulWidget {
 
 class _EmergencyIntentScreenState extends State<EmergencyIntentScreen> {
   String? _selectedOption;
+  final TextEditingController _notesController = TextEditingController();
 
-  List<String> _getOptions() {
-    switch (widget.category.toLowerCase()) {
-      case 'medical emergency':
-      case 'medical':
-        return ['Ambulance', 'Injury', 'Unconscious Person', 'Other'];
-      case 'women\'s safety':
-      case 'women safety':
-      case 'safety':
-        return ['Unsafe Situation', 'Harassment', 'Threat', 'Need Immediate Assistance', 'Other'];
-      case 'disaster management':
-      case 'disaster':
-        return ['Fire', 'Flood', 'Earthquake', 'Building Emergency', 'Other'];
-      case 'campus emergency':
-      case 'campus':
-        return ['Medical Incident', 'Campus Security', 'Active Fire', 'Harassment/Threat', 'Other'];
-      default:
-        return ['General Request', 'Other'];
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  List<String> _getOptions(BuildContext context) {
+    final lang = context.l10n.language;
+    final cat = EmergencyCategory.fromString(widget.category);
+
+    switch (cat) {
+      case EmergencyCategory.medical:
+        switch (lang) {
+          case AppLanguage.hindi:
+            return ['एम्बुलेंस', 'चोट / दुर्घटना', 'बेहोश व्यक्ति', 'अन्य'];
+          case AppLanguage.marathi:
+            return ['रुग्णवाहिका', 'दुखापत / अपघात', 'बेशुद्ध व्यक्ती', 'इतर'];
+          case AppLanguage.english:
+            return ['Ambulance', 'Injury', 'Unconscious Person', 'Other'];
+        }
+      case EmergencyCategory.womenSafety:
+        switch (lang) {
+          case AppLanguage.hindi:
+            return ['असुरक्षित स्थिति', 'उत्पीड़न', 'खतरा', 'तत्काल सहायता की आवश्यकता', 'अन्य'];
+          case AppLanguage.marathi:
+            return ['असुरक्षित परिस्थिती', 'छळ', 'धोका', 'त्वरित मदतीची गरज', 'इतर'];
+          case AppLanguage.english:
+            return ['Unsafe Situation', 'Harassment', 'Threat', 'Need Immediate Assistance', 'Other'];
+        }
+      case EmergencyCategory.disaster:
+        switch (lang) {
+          case AppLanguage.hindi:
+            return ['आग', 'बाढ़', 'भूकंप', 'इमारत आपातकाल', 'अन्य'];
+          case AppLanguage.marathi:
+            return ['आग', 'पूर', 'भूकंप', 'इमारत आणीबाणी', 'इतर'];
+          case AppLanguage.english:
+            return ['Fire', 'Flood', 'Earthquake', 'Building Emergency', 'Other'];
+        }
+      case EmergencyCategory.campus:
+        switch (lang) {
+          case AppLanguage.hindi:
+            return ['चिकित्सा घटना', 'परिसर सुरक्षा', 'सक्रिय आग', 'उत्पीड़न / खतरा', 'अन्य'];
+          case AppLanguage.marathi:
+            return ['वैद्यकीय घटना', 'कॅम्पस सुरक्षा', 'सक्रिय आग', 'छळ / धोका', 'इतर'];
+          case AppLanguage.english:
+            return ['Medical Incident', 'Campus Security', 'Active Fire', 'Harassment/Threat', 'Other'];
+        }
     }
   }
 
   Color _getCategoryColor() {
-    switch (widget.category.toLowerCase()) {
-      case 'medical emergency':
-      case 'medical':
+    final cat = EmergencyCategory.fromString(widget.category);
+    switch (cat) {
+      case EmergencyCategory.medical:
         return AppColors.medicalEmergency;
-      case 'women\'s safety':
-      case 'women safety':
-      case 'safety':
+      case EmergencyCategory.womenSafety:
         return AppColors.womenSafety;
-      case 'disaster management':
-      case 'disaster':
+      case EmergencyCategory.disaster:
         return AppColors.disasterManagement;
-      case 'campus emergency':
-      case 'campus':
+      case EmergencyCategory.campus:
         return AppColors.campusEmergency;
-      default:
-        return AppColors.primary;
     }
   }
 
@@ -73,6 +102,7 @@ class _EmergencyIntentScreenState extends State<EmergencyIntentScreen> {
       category: emergencyCategory,
       intent: _selectedOption!,
       priority: EmergencyPriority.high,
+      notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
     );
 
     if (result.isSuccess && result.data != null && mounted) {
@@ -94,13 +124,18 @@ class _EmergencyIntentScreenState extends State<EmergencyIntentScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
+    final cat = EmergencyCategory.fromString(widget.category);
     final color = _getCategoryColor();
-    final options = _getOptions();
+    final options = _getOptions(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.category),
+        title: Text(cat.localizedName(context)),
         backgroundColor: theme.appBarTheme.backgroundColor,
+        actions: const [
+          LanguageSwitcherButton(compact: true),
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -110,7 +145,7 @@ class _EmergencyIntentScreenState extends State<EmergencyIntentScreen> {
             children: [
               const SizedBox(height: AppDimensions.spaceSm),
               Text(
-                'Specify Emergency Intent',
+                l10n.specifyEmergencyIntent,
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -118,11 +153,16 @@ class _EmergencyIntentScreenState extends State<EmergencyIntentScreen> {
               ),
               const SizedBox(height: AppDimensions.spaceSm),
               Text(
-                'Select the closest option to help dispatch the correct response team.',
+                l10n.specifyEmergencyIntentSubtitle,
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppDimensions.spaceLg),
+              VoiceEmergencyInputCard(
+                controller: _notesController,
+                hintText: l10n.voiceInputHint,
+              ),
+              const SizedBox(height: AppDimensions.spaceMd),
               Expanded(
                 child: ListView.separated(
                   itemCount: options.length,
@@ -161,7 +201,7 @@ class _EmergencyIntentScreenState extends State<EmergencyIntentScreen> {
               ),
               PrimaryButton(
                 backgroundColor: color,
-                label: 'Confirm Emergency Request',
+                label: l10n.confirmEmergencyRequest,
                 onPressed: _selectedOption == null ? null : _confirmEmergencyRequest,
               ),
             ],

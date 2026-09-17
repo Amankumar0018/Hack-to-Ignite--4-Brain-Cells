@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/user_profile.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/secondary_button.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 
 /// Comprehensive Authentication Screen for Pukaar supporting Sign In and Sign Up
 /// across both Backend (Password / REST) and Mock (OTP) modes.
@@ -261,18 +263,22 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.appName),
+        actions: const [
+          LanguageSwitcherButton(),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppColors.primary,
           labelColor: theme.colorScheme.primary,
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-          tabs: const [
-            Tab(text: 'Sign In', icon: Icon(Icons.login_rounded)),
-            Tab(text: 'Sign Up', icon: Icon(Icons.person_add_outlined)),
+          tabs: [
+            Tab(text: l10n.signIn, icon: const Icon(Icons.login_rounded)),
+            Tab(text: l10n.signUp, icon: const Icon(Icons.person_add_outlined)),
           ],
         ),
       ),
@@ -316,6 +322,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   Widget _buildSignInTab(ThemeData theme) {
+    final l10n = context.l10n;
+
     return SingleChildScrollView(
       child: Form(
         key: _signInFormKey,
@@ -323,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              _isOtpSent ? 'Verify OTP Code' : 'Welcome Back',
+              _isOtpSent ? 'Verify OTP Code' : l10n.welcomeBack,
               style: theme.textTheme.displayMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
@@ -334,8 +342,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               _isOtpSent
                   ? 'Enter the 6-digit mock code sent to ${_signInMobileController.text}.'
                   : _isBackendMode
-                      ? 'Sign in with your registered mobile number and password.'
-                      : 'Provide your mobile number to sign in.',
+                      ? l10n.loginSubtitle
+                      : l10n.loginSubtitle,
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: AppDimensions.spaceMd),
@@ -346,9 +354,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   children: [
                     TextFormField(
                       controller: _signInMobileController,
-                      decoration: const InputDecoration(
-                        labelText: 'Mobile Number',
-                        prefixIcon: Icon(Icons.phone_android_rounded),
+                      decoration: InputDecoration(
+                        labelText: l10n.mobileNumber,
+                        prefixIcon: const Icon(Icons.phone_android_rounded),
                         hintText: 'e.g. 9876543210',
                       ),
                       keyboardType: TextInputType.phone,
@@ -364,7 +372,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       controller: _signInPasswordController,
                       obscureText: _obscureSignInPassword,
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: l10n.password,
                         prefixIcon: const Icon(Icons.lock_outline_rounded),
                         suffixIcon: IconButton(
                           icon: Icon(_obscureSignInPassword
@@ -384,7 +392,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     ),
                     const SizedBox(height: AppDimensions.spaceLg),
                     PrimaryButton(
-                      label: 'Sign In',
+                      label: l10n.signIn,
                       isLoading: _isLoading,
                       onPressed: _handlePasswordLogin,
                     ),
@@ -411,21 +419,21 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () => _quickFill('9876543210', 'password123'),
-                            child: const Text('Citizen', style: TextStyle(fontSize: 11)),
+                            child: Text(l10n.citizenRole, style: const TextStyle(fontSize: 11)),
                           ),
                         ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () => _quickFill('9000000000', 'responder123'),
-                            child: const Text('Responder', style: TextStyle(fontSize: 11)),
+                            child: Text(l10n.responderRole, style: const TextStyle(fontSize: 11)),
                           ),
                         ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () => _quickFill('9999999999', 'dual123'),
-                            child: const Text('Dual', style: TextStyle(fontSize: 11)),
+                            child: Text(l10n.dualRole, style: const TextStyle(fontSize: 11)),
                           ),
                         ),
                       ],
@@ -442,9 +450,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     if (!_isOtpSent) ...[
                       TextFormField(
                         controller: _signInMobileController,
-                        decoration: const InputDecoration(
-                          labelText: 'Mobile Number',
-                          prefixIcon: Icon(Icons.phone_android_rounded),
+                        decoration: InputDecoration(
+                          labelText: l10n.mobileNumber,
+                          prefixIcon: const Icon(Icons.phone_android_rounded),
                           hintText: 'e.g. 9876543210',
                         ),
                         keyboardType: TextInputType.phone,
@@ -457,7 +465,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       ),
                       const SizedBox(height: AppDimensions.spaceLg),
                       PrimaryButton(
-                        label: 'Get OTP',
+                        label: l10n.sendOtp,
                         isLoading: _isLoading,
                         onPressed: _handleSendOtp,
                       ),
@@ -477,13 +485,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            _canResend ? 'Did not receive code?' : 'Resend in ${_timerSeconds}s',
+                            _canResend ? 'Did not receive code?' : l10n.resendInSeconds(_timerSeconds),
                             style: theme.textTheme.bodyMedium,
                           ),
                           TextButton(
                             onPressed: _canResend ? _handleSendOtp : null,
                             child: Text(
-                              'Resend OTP',
+                              l10n.resendOtp,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: _canResend ? theme.colorScheme.primary : Colors.grey,
@@ -494,13 +502,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       ),
                       const SizedBox(height: AppDimensions.spaceLg),
                       PrimaryButton(
-                        label: 'Verify & Login',
+                        label: l10n.verifyOtpAndSignIn,
                         isLoading: _isLoading,
                         onPressed: _handleVerifyOtp,
                       ),
                       const SizedBox(height: AppDimensions.spaceSm),
                       SecondaryButton(
-                        label: 'Change Number',
+                        label: l10n.changePhoneNumber,
                         onPressed: () {
                           setState(() {
                             _isOtpSent = false;
@@ -530,6 +538,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   Widget _buildSignUpTab(ThemeData theme) {
+    final l10n = context.l10n;
+
     return SingleChildScrollView(
       child: Form(
         key: _signUpFormKey,
@@ -537,7 +547,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Create Pukaar Profile',
+              l10n.createPukaarProfile,
               style: theme.textTheme.displayMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
@@ -555,9 +565,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 children: [
                   TextFormField(
                     controller: _signUpNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Full Name *',
-                      prefixIcon: Icon(Icons.person_outline),
+                    decoration: InputDecoration(
+                      labelText: '${l10n.fullName} *',
+                      prefixIcon: const Icon(Icons.person_outline),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -569,9 +579,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   const SizedBox(height: AppDimensions.spaceMd),
                   TextFormField(
                     controller: _signUpMobileController,
-                    decoration: const InputDecoration(
-                      labelText: 'Mobile Number *',
-                      prefixIcon: Icon(Icons.phone_android_rounded),
+                    decoration: InputDecoration(
+                      labelText: '${l10n.mobileNumber} *',
+                      prefixIcon: const Icon(Icons.phone_android_rounded),
                     ),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
@@ -587,7 +597,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       controller: _signUpPasswordController,
                       obscureText: _obscureSignUpPassword,
                       decoration: InputDecoration(
-                        labelText: 'Password *',
+                        labelText: '${l10n.password} *',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(_obscureSignUpPassword
@@ -608,7 +618,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ],
                   const SizedBox(height: AppDimensions.spaceLg),
                   Text(
-                    'Select Profile Capability / Role *',
+                    '${l10n.selectAccountRole} *',
                     style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: AppDimensions.spaceXs),
@@ -618,7 +628,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     children: [
                       ChoiceChip(
                         avatar: const Icon(Icons.person, size: 16),
-                        label: const Text('Citizen'),
+                        label: Text(l10n.citizenRole),
                         selected: _selectedRole == 'citizen',
                         onSelected: (selected) {
                           if (selected) setState(() => _selectedRole = 'citizen');
@@ -626,7 +636,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       ),
                       ChoiceChip(
                         avatar: const Icon(Icons.badge, size: 16),
-                        label: const Text('Responder'),
+                        label: Text(l10n.roleResponder),
                         selected: _selectedRole == 'responder',
                         onSelected: (selected) {
                           if (selected) setState(() => _selectedRole = 'responder');
@@ -634,7 +644,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       ),
                       ChoiceChip(
                         avatar: const Icon(Icons.star_rounded, size: 16),
-                        label: const Text('Dual (Both)'),
+                        label: Text(l10n.roleDual),
                         selected: _selectedRole == 'dual',
                         onSelected: (selected) {
                           if (selected) setState(() => _selectedRole = 'dual');
@@ -644,15 +654,15 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                   const SizedBox(height: AppDimensions.spaceLg),
                   Text(
-                    'Primary Emergency Contact *',
+                    '${l10n.primaryEmergencyContact} *',
                     style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: AppDimensions.spaceSm),
                   TextFormField(
                     controller: _signUpContactNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Contact Name *',
-                      prefixIcon: Icon(Icons.contacts_outlined),
+                    decoration: InputDecoration(
+                      labelText: '${l10n.contactPersonName} *',
+                      prefixIcon: const Icon(Icons.contacts_outlined),
                       hintText: 'e.g. Spouse / Parent',
                     ),
                     validator: (value) {
@@ -665,9 +675,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   const SizedBox(height: AppDimensions.spaceMd),
                   TextFormField(
                     controller: _signUpContactPhoneController,
-                    decoration: const InputDecoration(
-                      labelText: 'Contact Phone *',
-                      prefixIcon: Icon(Icons.phone_outlined),
+                    decoration: InputDecoration(
+                      labelText: '${l10n.contactPersonMobile} *',
+                      prefixIcon: const Icon(Icons.phone_outlined),
                     ),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
@@ -679,7 +689,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                   const SizedBox(height: AppDimensions.spaceLg),
                   PrimaryButton(
-                    label: 'Create Account & Sign In',
+                    label: l10n.createAccountAndSignIn,
                     isLoading: _isLoading,
                     onPressed: _handleSignUp,
                   ),

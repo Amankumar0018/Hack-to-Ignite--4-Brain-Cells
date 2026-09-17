@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/secondary_button.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 
 /// Onboarding screen introducing users to Pukaar's 4 core emergency pillars.
 class OnboardingScreen extends StatefulWidget {
@@ -48,17 +49,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Welcome to Pukaar'),
+        title: Text(l10n.welcomeToPukaar),
         automaticallyImplyLeading: false,
         actions: [
+          const LanguageSwitcherButton(),
           if (_currentPage < 2)
             TextButton(
               onPressed: _finishOnboarding,
               child: Text(
-                'Skip',
+                l10n.skip,
                 style: TextStyle(
                   color: theme.colorScheme.primary,
                   fontWeight: FontWeight.w600,
@@ -82,9 +85,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     });
                   },
                   children: [
-                    _buildPageOne(theme),
-                    _buildPageTwo(theme),
-                    _buildPageThree(theme),
+                    _buildPageOne(theme, l10n),
+                    _buildPageTwo(theme, l10n),
+                    _buildPageThree(theme, l10n),
                   ],
                 ),
               ),
@@ -115,7 +118,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: AppDimensions.spaceSm),
                         child: SecondaryButton(
-                          label: 'Back',
+                          label: l10n.back,
                           onPressed: () {
                             _pageController.previousPage(
                               duration: const Duration(milliseconds: 300),
@@ -127,7 +130,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   Expanded(
                     child: PrimaryButton(
-                      label: _currentPage == 2 ? 'Get Started' : 'Continue',
+                      label: _currentPage == 2 ? l10n.getStarted : l10n.continueText,
                       onPressed: _nextPage,
                     ),
                   ),
@@ -140,7 +143,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildPageOne(ThemeData theme) {
+  Widget _buildPageOne(ThemeData theme, AppLocalizations l10n) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -151,7 +154,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: AppDimensions.spaceLg),
         Text(
-          'One platform for emergency help.',
+          l10n.onboardingSlide1Title,
           style: theme.textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
@@ -159,7 +162,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceMd),
           child: Text(
-            'Pukaar is a smart emergency response framework tailored to keep you safe in critical situations.',
+            l10n.onboardingSlide1Body,
             style: theme.textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),
@@ -168,13 +171,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildPageTwo(ThemeData theme) {
+  Widget _buildPageTwo(ThemeData theme, AppLocalizations l10n) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Four Core Safety Pillars',
+          l10n.onboardingSlide2Title,
           style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
@@ -182,33 +185,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Expanded(
           child: ListView(
             shrinkWrap: true,
-            children: const [
+            children: [
               _FeaturePillar(
                 icon: Icons.medical_services_rounded,
                 color: AppColors.medicalEmergency,
-                title: AppStrings.medicalEmergency,
-                description: AppStrings.medicalEmergencyDesc,
+                title: l10n.medicalEmergency,
+                description: l10n.medicalEmergencyDesc,
               ),
-              SizedBox(height: AppDimensions.spaceSm),
+              const SizedBox(height: AppDimensions.spaceSm),
               _FeaturePillar(
                 icon: Icons.shield_rounded,
                 color: AppColors.womenSafety,
-                title: AppStrings.womenSafety,
-                description: AppStrings.womenSafetyDesc,
+                title: l10n.womenSafety,
+                description: l10n.womenSafetyDesc,
               ),
-              SizedBox(height: AppDimensions.spaceSm),
+              const SizedBox(height: AppDimensions.spaceSm),
               _FeaturePillar(
                 icon: Icons.warning_rounded,
                 color: AppColors.disasterManagement,
-                title: AppStrings.disasterManagement,
-                description: AppStrings.disasterManagementDesc,
+                title: l10n.disasterManagement,
+                description: l10n.disasterManagementDesc,
               ),
-              SizedBox(height: AppDimensions.spaceSm),
+              const SizedBox(height: AppDimensions.spaceSm),
               _FeaturePillar(
                 icon: Icons.school_rounded,
                 color: AppColors.campusEmergency,
-                title: AppStrings.campusEmergency,
-                description: AppStrings.campusEmergencyDesc,
+                title: l10n.campusEmergency,
+                description: l10n.campusEmergencyDesc,
               ),
             ],
           ),
@@ -217,7 +220,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildPageThree(ThemeData theme) {
+  Widget _buildPageThree(ThemeData theme, AppLocalizations l10n) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -228,7 +231,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: AppDimensions.spaceLg),
         Text(
-          'Direct Connections',
+          l10n.onboardingSlide3Title,
           style: theme.textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
@@ -236,7 +239,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceMd),
           child: Text(
-            'We immediately connect a person in distress with appropriate local responders, campus security, and public emergency support services.',
+            l10n.onboardingSlide3Body,
             style: theme.textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),

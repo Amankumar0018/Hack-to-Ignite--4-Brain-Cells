@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/emergency_enums.dart';
 import '../../../../core/models/emergency_incident.dart';
 import '../../../../core/routing/app_routes.dart';
@@ -10,6 +11,7 @@ import '../../../../core/services/service_locator.dart';
 import '../../../../core/widgets/emergency_map.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 import '../widgets/ai_incident_card.dart';
 
 /// Central Dashboard Screen for Emergency Responders to view active incidents,
@@ -209,7 +211,7 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
     }
   }
 
-  Widget _buildStatusChip(EmergencyStatus status, Color categoryColor) {
+  Widget _buildStatusChip(EmergencyStatus status, Color categoryColor, BuildContext context) {
     Color chipBg;
     Color chipText;
 
@@ -248,7 +250,7 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        status.displayName.toUpperCase(),
+        status.localizedName(context).toUpperCase(),
         style: TextStyle(
           color: chipText,
           fontWeight: FontWeight.bold,
@@ -261,6 +263,7 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
 
   Widget _buildIncidentCard(EmergencyIncident incident) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final categoryColor = _getCategoryColor(incident.category);
 
     return AppCard(
@@ -278,7 +281,7 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
                   Icon(Icons.shield, color: categoryColor, size: 20),
                   const SizedBox(width: AppDimensions.spaceXs),
                   Text(
-                    incident.category.displayName,
+                    incident.category.localizedName(context),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: categoryColor,
@@ -287,7 +290,7 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
                   ),
                 ],
               ),
-              _buildStatusChip(incident.status, categoryColor),
+              _buildStatusChip(incident.status, categoryColor, context),
             ],
           ),
           const SizedBox(height: AppDimensions.spaceSm),
@@ -325,7 +328,7 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
             longitude: incident.longitude,
             responderLatitude: _responderDeviceLocation?.latitude ?? incident.responderLatitude,
             responderLongitude: _responderDeviceLocation?.longitude ?? incident.responderLongitude,
-            title: '${incident.category.displayName} Alert Map',
+            title: '${incident.category.localizedName(context)} Alert Map',
             markerColor: categoryColor,
             height: 160,
           ),
@@ -383,19 +386,19 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
               incident.status == EmergencyStatus.dispatched)
             PrimaryButton(
               backgroundColor: categoryColor,
-              label: 'Accept Incident Response',
+              label: l10n.acceptIncidentResponse,
               onPressed: () => _handleAcceptIncident(incident),
             )
           else if (incident.status == EmergencyStatus.accepted)
             PrimaryButton(
               backgroundColor: AppColors.primary,
-              label: 'Start Response (In Progress)',
+              label: l10n.startResponseInProgress,
               onPressed: () => _handleStartResponse(incident),
             )
           else if (incident.status == EmergencyStatus.inProgress)
             PrimaryButton(
               backgroundColor: AppColors.success,
-              label: 'Mark Incident Resolved',
+              label: l10n.markIncidentResolved,
               onPressed: () => _handleResolveIncident(incident),
             ),
         ],
@@ -406,12 +409,13 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: 'Return to Citizen Home',
+          tooltip: l10n.returnToCitizenHome,
           onPressed: _navigateToHome,
         ),
         title: Row(
@@ -420,7 +424,7 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
             const Icon(Icons.badge, color: AppColors.primary),
             const SizedBox(width: AppDimensions.spaceSm),
             Text(
-              'Responder Dashboard',
+              l10n.responderDashboard,
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w800,
                 fontSize: 18,
@@ -429,14 +433,15 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
           ],
         ),
         actions: [
+          const LanguageSwitcherButton(compact: true),
           IconButton(
             icon: const Icon(Icons.home_outlined),
-            tooltip: 'Switch to Citizen View',
+            tooltip: l10n.returnToCitizenHome,
             onPressed: _navigateToHome,
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh Incidents',
+            tooltip: l10n.retry,
             onPressed: _fetchActiveIncidents,
           ),
         ],
@@ -459,7 +464,7 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
                             const SizedBox(height: AppDimensions.spaceMd),
                             ElevatedButton(
                               onPressed: _fetchActiveIncidents,
-                              child: const Text('Retry'),
+                              child: Text(l10n.retry),
                             ),
                           ],
                         ),
@@ -476,20 +481,20 @@ class _ResponderDashboardScreenState extends State<ResponderDashboardScreen> {
                                 children: [
                                   const Icon(Icons.check_circle_outline, size: 64, color: AppColors.success),
                                   const SizedBox(height: AppDimensions.spaceMd),
-                                  const Text(
-                                    'No Active Emergencies',
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  Text(
+                                    l10n.noActiveEmergencies,
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: AppDimensions.spaceXs),
-                                  const Text(
-                                    'All emergency requests are currently clear or resolved.',
-                                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                                  Text(
+                                    l10n.allClearNotice,
+                                    style: const TextStyle(color: Colors.grey, fontSize: 13),
                                     textAlign: TextAlign.center,
                                   ),
                                   const SizedBox(height: AppDimensions.spaceLg),
                                   ElevatedButton.icon(
                                     icon: const Icon(Icons.home),
-                                    label: const Text('Return to Citizen Home'),
+                                    label: Text(l10n.returnToCitizenHome),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.secondary,
                                       foregroundColor: AppColors.white,

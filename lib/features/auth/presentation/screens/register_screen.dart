@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_dimensions.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/models/user_profile.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/services/service_locator.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 
 /// User registration screen collecting emergency-critical details.
 class RegisterScreen extends StatefulWidget {
@@ -88,10 +90,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Complete Profile'),
+        title: Text(l10n.completeProfile),
+        actions: const [
+          LanguageSwitcherButton(),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -102,14 +108,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Emergency Profile',
+                  l10n.emergencyProfile,
                   style: theme.textTheme.displayMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: AppDimensions.spaceXs),
                 Text(
-                  'This critical information is stored locally and will be visible to emergency responders.',
+                  l10n.emergencyProfileDesc,
                   style: theme.textTheme.bodyLarge,
                 ),
                 const SizedBox(height: AppDimensions.spaceLg),
@@ -134,15 +140,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Personal Information',
+                        l10n.personalInfo,
                         style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: AppDimensions.spaceMd),
                       TextFormField(
                         controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Full Name *',
-                          prefixIcon: Icon(Icons.person_outline),
+                        decoration: InputDecoration(
+                          labelText: '${l10n.fullName} *',
+                          prefixIcon: const Icon(Icons.person_outline),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -154,9 +160,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: AppDimensions.spaceMd),
                       TextFormField(
                         controller: _mobileController,
-                        decoration: const InputDecoration(
-                          labelText: 'Mobile Number *',
-                          prefixIcon: Icon(Icons.phone_android_rounded),
+                        decoration: InputDecoration(
+                          labelText: '${l10n.mobileNumber} *',
+                          prefixIcon: const Icon(Icons.phone_android_rounded),
                         ),
                         keyboardType: TextInputType.phone,
                         readOnly: true, // User verified this in previous step
@@ -167,9 +173,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Expanded(
                             child: TextFormField(
                               controller: _ageController,
-                              decoration: const InputDecoration(
-                                labelText: 'Age (Years)',
-                                prefixIcon: Icon(Icons.cake_outlined),
+                              decoration: InputDecoration(
+                                labelText: l10n.ageYears,
+                                prefixIcon: const Icon(Icons.cake_outlined),
                               ),
                               keyboardType: TextInputType.number,
                             ),
@@ -178,9 +184,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Expanded(
                             child: TextFormField(
                               controller: _emailController,
-                              decoration: const InputDecoration(
-                                labelText: 'Email (Optional)',
-                                prefixIcon: Icon(Icons.email_outlined),
+                              decoration: InputDecoration(
+                                labelText: l10n.emailOptional,
+                                prefixIcon: const Icon(Icons.email_outlined),
                               ),
                               keyboardType: TextInputType.emailAddress,
                             ),
@@ -189,15 +195,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: AppDimensions.spaceLg),
                       Text(
-                        'Primary Emergency Contact',
+                        l10n.primaryEmergencyContact,
                         style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: AppDimensions.spaceMd),
                       TextFormField(
                         controller: _contactNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Contact Person Name *',
-                          prefixIcon: Icon(Icons.contacts_outlined),
+                        decoration: InputDecoration(
+                          labelText: '${l10n.contactPersonName} *',
+                          prefixIcon: const Icon(Icons.contacts_outlined),
                           hintText: 'e.g. Spouse, Father, Friend',
                         ),
                         validator: (value) {
@@ -210,9 +216,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: AppDimensions.spaceMd),
                       TextFormField(
                         controller: _contactPhoneController,
-                        decoration: const InputDecoration(
-                          labelText: 'Contact Person Mobile *',
-                          prefixIcon: Icon(Icons.phone_outlined),
+                        decoration: InputDecoration(
+                          labelText: '${l10n.contactPersonMobile} *',
+                          prefixIcon: const Icon(Icons.phone_outlined),
                         ),
                         keyboardType: TextInputType.phone,
                         validator: (value) {
@@ -224,7 +230,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: AppDimensions.spaceLg),
                       PrimaryButton(
-                        label: 'Save Emergency Profile',
+                        label: l10n.saveEmergencyProfile,
                         isLoading: _isLoading,
                         onPressed: _handleRegister,
                       ),

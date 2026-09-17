@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/routing/app_routes.dart';
 
 import '../../../../core/services/service_locator.dart';
@@ -100,8 +101,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               const SizedBox(height: AppDimensions.spaceSm),
-              const Text(
-                AppStrings.appTagline,
+              Text(
+                context.l10n.appTagline,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,

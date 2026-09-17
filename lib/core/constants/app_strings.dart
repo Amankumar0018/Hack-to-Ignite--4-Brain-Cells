@@ -1,6 +1,18 @@
+import 'package:flutter/material.dart';
+import '../localization/app_localizations.dart';
+import '../services/service_locator.dart';
+
 /// Centralized strings used across the Pukaar Emergency Platform.
+/// Provides static fallback defaults and bridges to active [AppLocalizations].
 class AppStrings {
   AppStrings._();
+
+  /// Gets the currently active [AppLocalizations] instance.
+  static AppLocalizations get current =>
+      AppLocalizations.ofLocale(ServiceLocator.instance.localizationService.currentLocale);
+
+  /// Gets the [AppLocalizations] from context.
+  static AppLocalizations of(BuildContext context) => AppLocalizations.of(context);
 
   // App Identity
   static const String appName = 'Pukaar';

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../shared/widgets/app_card.dart';
 import '../../../../shared/widgets/secondary_button.dart';
+import '../../../localization/presentation/widgets/language_switcher_button.dart';
 
 /// SOS Emergency Screen placeholder for active alert triggers and countdown.
 class EmergencySosScreen extends StatelessWidget {
@@ -12,10 +13,14 @@ class EmergencySosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Emergency Trigger'),
+        title: Text(l10n.emergencyTrigger),
+        actions: const [
+          LanguageSwitcherButton(compact: true),
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -62,7 +67,7 @@ class EmergencySosScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppDimensions.spaceXl),
               Text(
-                'Pressing SOS will broadcast your current GPS coordinates to nearest response dispatchers and trusted contacts.',
+                l10n.sosBroadcastNotice,
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -70,14 +75,14 @@ class EmergencySosScreen extends StatelessWidget {
               AppCard(
                 backgroundColor: AppColors.medicalEmergency.withValues(alpha: 0.08),
                 borderColor: AppColors.medicalEmergency.withValues(alpha: 0.2),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.location_on, color: AppColors.primary),
-                    SizedBox(width: AppDimensions.spaceSm),
+                    const Icon(Icons.location_on, color: AppColors.primary),
+                    const SizedBox(width: AppDimensions.spaceSm),
                     Expanded(
                       child: Text(
-                        'Location ready: GPS status active',
-                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                        l10n.locationReadyGpsActive,
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                       ),
                     ),
                   ],
@@ -85,7 +90,7 @@ class EmergencySosScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppDimensions.spaceMd),
               SecondaryButton(
-                label: AppStrings.cancelSos,
+                label: l10n.cancelSos,
                 onPressed: () => Navigator.pop(context),
               ),
             ],
