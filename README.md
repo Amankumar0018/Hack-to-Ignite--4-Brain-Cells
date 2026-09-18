@@ -1,6 +1,6 @@
 # 🚨 Pukaar — Next-Gen Emergency Response & Dispatch System
 
-**Pukaar** is a unified, high-availability emergency platform designed to connect citizens in distress with rapid-response dispatchers and emergency personnel. Built for Smart India Hackathon (SIH) 2026, Pukaar streamlines triage across four core emergency pillars, captures precise GPS telemetry, visualizes live incident locations on OpenStreetMap, and synchronizes real-time status transitions between citizens and responder dashboards.
+**Pukaar** is a unified, high-availability emergency platform designed to connect citizens in distress with rapid-response dispatchers and emergency personnel. Pukaar streamlines triage across four core emergency pillars, captures precise GPS telemetry, visualizes live incident locations on OpenStreetMap, and synchronizes real-time status transitions between citizens and responder dashboards.
 
 ---
 
